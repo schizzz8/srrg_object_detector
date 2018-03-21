@@ -1,0 +1,2 @@
+add_subdirectory(srrg_object_detector)
+add_subdirectory(apps)
