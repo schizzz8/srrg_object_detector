@@ -46,7 +46,7 @@ void ObjectDetector::setImages(const srrg_core::RGBImage &rgb_image_,
       const Eigen::Vector3f point(p[0],p[1],p[2]);
       const Eigen::Vector3f normal(n[0],n[1],n[2]);
 
-      _depth_cloud.push_back(RichPoint3D(point,normal,1.0f));
+      _depth_cloud.push_back(RichPoint3D(point,normal,1.0f,Eigen::Vector3f(0.5,0.5,1.0)));
     }
 
 //    std::ofstream outfile;
@@ -125,7 +125,7 @@ void ObjectDetector::readData(char *filename){
   std::cerr << _logical_camera_transform.linear().matrix() << std::endl << std::endl;
 
   int num_models=_models.size();
-  std::cerr << "Detected " << num_models << " models" << std::endl;
+  std::cerr << "Detected " << num_models << " models" << std::endl << std::endl;
   for(int i=0; i<num_models; ++i){
     const Model &model = _models[i];
     std::cerr << model._type << std::endl;
@@ -185,7 +185,7 @@ void ObjectDetector::computeImageBoundingBoxes(){
       if(cv::norm(p) < 1e-3)
         continue;
 
-      const Eigen::Vector3f point(p[1],p[0],p[2]);
+      const Eigen::Vector3f point(p[0],p[1],p[2]);
 
       for(int j=0; j < _bounding_boxes.size(); ++j){
         int &r_min = _detections[j]._top_left.x();
@@ -194,9 +194,6 @@ void ObjectDetector::computeImageBoundingBoxes(){
         int &c_max = _detections[j]._bottom_right.y();
 
         if(inRange(point,_bounding_boxes[j])){
-
-          std::cerr << ".";
-
           if(r < r_min)
             r_min = r;
           if(r > r_max)

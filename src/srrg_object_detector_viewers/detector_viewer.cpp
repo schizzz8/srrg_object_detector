@@ -18,17 +18,19 @@ DetectorViewer::DetectorViewer() {
 
 void DetectorViewer::draw(){
   _cloud.draw();
+
   for(int i=0; i<_bounding_boxes.size(); ++i){
     const Eigen::Vector3f& min=_bounding_boxes[i].first;
     const Eigen::Vector3f& max=_bounding_boxes[i].second;
     const Eigen::Vector3f centroid = (min + max)/2.0f;
-    const Eigen::Vector3f half_size= (max - min)/2.0f;
+    const Eigen::Vector3f half_size= (max - min);//2.0f;
 
     Eigen::Isometry3f transform = Eigen::Isometry3f::Identity();
     transform.translation() = centroid;
 
     glPushMatrix();
     glMultMatrix(transform);
+    glColor4f(1.0,0.0,0.0,1.0);
     drawBoxWireframe(half_size.x(),half_size.y(),half_size.z());
     glPopMatrix();
 

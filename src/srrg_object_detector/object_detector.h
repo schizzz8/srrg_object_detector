@@ -69,6 +69,8 @@ public:
 
   void compute();
 
+  inline const Eigen::Isometry3f& rgbdCameraTransform() const {return _rgbd_camera_transform;}
+  inline const Eigen::Isometry3f& logicalCameraTransform() const {return _logical_camera_transform;}
   inline const srrg_core::UnsignedCharImage& labelImage() const {return _label_image;}
   inline const srrg_core::Cloud3D& depthCloud() const {return _depth_cloud;}
   inline const BoundingBoxes3D& boundingBoxes() const {return _bounding_boxes;}

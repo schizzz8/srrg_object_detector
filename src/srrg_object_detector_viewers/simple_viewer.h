@@ -3,6 +3,8 @@
 #include <QKeyEvent>
 #include <QGLViewer/qglviewer.h>
 
+#include <srrg_types/types.hpp>
+
 class SimpleViewer: public QGLViewer {
 public:
 

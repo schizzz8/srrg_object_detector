@@ -28,9 +28,9 @@ int main(int argc, char** argv) {
 
   //K
   Eigen::Matrix3f K;
-  K << 277.127,     0.0, 160.5,
-           0.0, 277.127, 120.5,
-           0.0,     0.0,   1.0;
+  K << 554.25,    0.0, 320.5,
+          0.0, 554.25, 240.5,
+          0.0,    0.0,   1.0;
 
   //log
   char* filename = argv[3];
@@ -41,15 +41,16 @@ int main(int argc, char** argv) {
   detector.readData(filename);
   detector.compute();
 
+//  cv::Mat label_image = detector.labelImage().clone();
+//  cv::imshow("label_image",label_image);
+//  cv::waitKey();
+
   QApplication app(argc, argv);
   DetectorViewer viewer;
   viewer.setDetector(&detector);
   viewer.show();
   app.exec();
 
-  //  cv::Mat label_image = detector.labelImage().clone();
-  //  cv::imshow("label_image",label_image);
-  //  cv::waitKey();
 
   return 0;
 }
