@@ -22,8 +22,39 @@ void ObjectDetector::setImages(const srrg_core::RGBImage &rgb_image_,
   computePointsImage(_points_image,
                      directions_image,
                      depth_image,
-                     0.04f,
+                     0.02f,
                      8.0f);
+
+  srrg_core::Float3Image cross_normals_image;
+  computeSimpleNormals(cross_normals_image,
+                       _points_image,
+                       3,
+                       3,
+                       8);
+
+
+  for(int r=0; r<_rows; ++r){
+    const cv::Vec3f* point_ptr = _points_image.ptr<const cv::Vec3f>(r);
+    const cv::Vec3f* normal_ptr = cross_normals_image.ptr<const cv::Vec3f>(r);
+    for(int c=0; c<_cols; ++c, ++point_ptr, ++normal_ptr){
+      const cv::Vec3f& p = *point_ptr;
+      const cv::Vec3f& n = *normal_ptr;
+
+      if(cv::norm(p) < 1e-3 || cv::norm(n) < 1e-3)
+        continue;
+
+      const Eigen::Vector3f point(p[0],p[1],p[2]);
+      const Eigen::Vector3f normal(n[0],n[1],n[2]);
+
+      _depth_cloud.push_back(RichPoint3D(point,normal,1.0f));
+    }
+
+//    std::ofstream outfile;
+//    outfile.open("depth.cloud");
+//    _depth_cloud.write(outfile);
+//    outfile.close();
+
+  }
 
   _label_image.create(_rows,_cols);
   _label_image=0;
@@ -163,6 +194,9 @@ void ObjectDetector::computeImageBoundingBoxes(){
         int &c_max = _detections[j]._bottom_right.y();
 
         if(inRange(point,_bounding_boxes[j])){
+
+          std::cerr << ".";
+
           if(r < r_min)
             r_min = r;
           if(r > r_max)

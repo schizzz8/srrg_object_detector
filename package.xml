@@ -42,8 +42,12 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>srrg_core</build_depend>
+  <build_depend>srrg_core_viewers</build_depend>
+  <build_depend>srrg_gl_helpers</build_depend>
 
   <run_depend>srrg_core</run_depend>
+  <run_depend>srrg_core_viewers</run_depend>
+  <run_depend>srrg_gl_helpers</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

@@ -12,6 +12,8 @@
 #include <srrg_image_utils/depth_utils.h>
 #include <srrg_image_utils/point_image_utils.h>
 
+
+
 class Detection{
 public:
   Detection(const std::string& type_="",
@@ -68,6 +70,8 @@ public:
   void compute();
 
   inline const srrg_core::UnsignedCharImage& labelImage() const {return _label_image;}
+  inline const srrg_core::Cloud3D& depthCloud() const {return _depth_cloud;}
+  inline const BoundingBoxes3D& boundingBoxes() const {return _bounding_boxes;}
 
 protected:
   cv::Mat _rgb_image;
@@ -76,6 +80,7 @@ protected:
   int _cols;
   Eigen::Matrix3f _K;
   srrg_core::Float3Image _points_image;
+  srrg_core::Cloud3D _depth_cloud;
 
   Eigen::Isometry3f _rgbd_camera_transform;
   Eigen::Isometry3f _logical_camera_transform;

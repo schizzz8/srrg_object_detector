@@ -1,2 +1,3 @@
 add_subdirectory(srrg_object_detector)
+add_subdirectory(srrg_object_detector_viewers)
 add_subdirectory(apps)

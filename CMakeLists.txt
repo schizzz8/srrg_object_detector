@@ -28,6 +28,8 @@ endif ()
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   srrg_core
+  srrg_core_viewers
+  srrg_gl_helpers
 )
 
 ## System dependencies are found with CMake's conventions
@@ -41,6 +43,15 @@ find_package(OpenCV REQUIRED)
 message("using OpenCV version ${OpenCV_VERSION} (${OpenCV_DIR})")
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+# Find OpenGL
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE})
+
+# Find QGLViewer
+find_package(QGLViewer REQUIRED)
+include_directories(${QGLVIEWER_INCLUDE_DIR})
+message(STATUS "SRRG_QT_INCLUDE_DIRS: ${SRRG_QT_INCLUDE_DIRS}")
+include_directories(${SRRG_QT_INCLUDE_DIRS})
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -129,8 +140,8 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS src
-  LIBRARIES srrg_object_detector_library
-  CATKIN_DEPENDS srrg_core
+  LIBRARIES srrg_object_detector_library srrg_object_detector_viewers_library
+  CATKIN_DEPENDS srrg_core srrg_core_viewers srrg_gl_helpers
 #  DEPENDS system_lib
 )
 
