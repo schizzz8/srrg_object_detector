@@ -41,16 +41,18 @@ int main(int argc, char** argv) {
   detector.readData(filename);
   detector.compute();
 
+  cv::Mat label_image = detector.labelImage().clone();
+  cv::imshow("label_image",label_image);
+  cv::waitKey();
+
 //  cv::Mat label_image = detector.labelImage().clone();
-//  cv::imshow("label_image",label_image);
-//  cv::waitKey();
+//  cv::imwrite("label_image.png",label_image);
 
-  QApplication app(argc, argv);
-  DetectorViewer viewer;
-  viewer.setDetector(&detector);
-  viewer.show();
-  app.exec();
-
+//  QApplication app(argc, argv);
+//  DetectorViewer viewer;
+//  viewer.setDetector(&detector);
+//  viewer.show();
+//  app.exec();
 
   return 0;
 }

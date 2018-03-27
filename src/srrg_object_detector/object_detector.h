@@ -97,9 +97,9 @@ private:
   void computeWorldBoundingBoxes();
 
   inline bool inRange(const Eigen::Vector3f &point, const BoundingBox3D &bounding_box){
-    return (point.x() >= bounding_box.first.x() && point.x() < bounding_box.second.x() &&
-            point.y() >= bounding_box.first.y() && point.y() < bounding_box.second.y() &&
-            point.z() >= bounding_box.first.z() && point.z() < bounding_box.second.z());
+    return (point.x() >= bounding_box.first.x()-0.01 && point.x() <= bounding_box.second.x()+0.01 &&
+            point.y() >= bounding_box.first.y()-0.01 && point.y() <= bounding_box.second.y()+0.01 &&
+            point.z() >= bounding_box.first.z()-0.01 && point.z() <= bounding_box.second.z()+0.01);
   }
 
   void computeImageBoundingBoxes();

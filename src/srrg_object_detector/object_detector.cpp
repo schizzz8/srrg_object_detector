@@ -205,8 +205,6 @@ void ObjectDetector::computeImageBoundingBoxes(){
             c_max = c;
 
           _detections[j]._pixels.push_back(Eigen::Vector2i(c,r));
-          _rgb_image.at<cv::Vec3b>(c,r) = cv::Vec3b(255,0,0);
-
           break;
         }
       }
@@ -242,7 +240,7 @@ float ObjectDetector::type2float(std::string type){
       return 2.0f*step;
     case str2int("couch"):
       return 3.0f*step;
-    case str2int("cabinet"):
+    case str2int("salt"):
       return 4.0f*step;
     case str2int("tomato"):
       return 5.0f*step;
@@ -261,7 +259,7 @@ void ObjectDetector::computeLabelImage(){
       int r = _detections[i]._pixels[j].x();
       int c = _detections[i]._pixels[j].y();
 
-      _label_image.at<unsigned char>(r,c) = type2float(cropped_type)*255.0f;
+      _label_image.at<unsigned char>(c,r) = type2float(cropped_type)*255.0f;
     }
   }
 }
