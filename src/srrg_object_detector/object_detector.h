@@ -71,7 +71,7 @@ public:
 
   inline const Eigen::Isometry3f& rgbdCameraTransform() const {return _rgbd_camera_transform;}
   inline const Eigen::Isometry3f& logicalCameraTransform() const {return _logical_camera_transform;}
-  inline const srrg_core::UnsignedCharImage& labelImage() const {return _label_image;}
+  inline const srrg_core::RGBImage& labelImage() const {return _label_image;}
   inline const srrg_core::Cloud3D& depthCloud() const {return _depth_cloud;}
   inline const BoundingBoxes3D& boundingBoxes() const {return _bounding_boxes;}
 
@@ -91,7 +91,7 @@ protected:
   BoundingBoxes3D _bounding_boxes;
   Detections _detections;
 
-  srrg_core::UnsignedCharImage _label_image;
+  srrg_core::RGBImage _label_image;
 
 private:
   void computeWorldBoundingBoxes();
@@ -104,7 +104,7 @@ private:
 
   void computeImageBoundingBoxes();
 
-  float type2float(std::string type);
+  cv::Vec3b type2color(std::string type);
 
   void computeLabelImage();
 

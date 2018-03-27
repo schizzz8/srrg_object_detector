@@ -41,8 +41,7 @@ int main(int argc, char** argv) {
   detector.readData(filename);
   detector.compute();
 
-  cv::Mat label_image = detector.labelImage().clone();
-  cv::imshow("label_image",label_image);
+  cv::imshow("label_image",detector.labelImage());
   cv::waitKey();
 
 //  cv::Mat label_image = detector.labelImage().clone();

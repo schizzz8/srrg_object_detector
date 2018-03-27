@@ -1,4 +1,6 @@
 #include "object_detector.h"
+#include <iomanip>
+
 
 using namespace srrg_core;
 
@@ -57,7 +59,7 @@ void ObjectDetector::setImages(const srrg_core::RGBImage &rgb_image_,
   }
 
   _label_image.create(_rows,_cols);
-  _label_image=0;
+  _label_image=cv::Vec3b(0,0,0);
 }
 
 void ObjectDetector::readData(char *filename){
@@ -226,40 +228,42 @@ void ObjectDetector::compute(){
   computeLabelImage();
 }
 
-constexpr unsigned int str2int(const char* str, int h = 0){
-    return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
-}
 
-float ObjectDetector::type2float(std::string type){
-  float step = 1.0f/6.0f;
+cv::Vec3b ObjectDetector::type2color(std::string type){
+  int c;
 
-  switch (str2int(type.c_str())){
-    case str2int("table"):
-      return 1.0f*step;
-    case str2int("chair"):
-      return 2.0f*step;
-    case str2int("couch"):
-      return 3.0f*step;
-    case str2int("salt"):
-      return 4.0f*step;
-    case str2int("tomato"):
-      return 5.0f*step;
-    case str2int("milk"):
-      return 6.0f*step;
-    default:
-      return 0;
-  }
+  if(type == "table")
+    c = 1;
+  if(type == "tomato")
+    c = 2;
+  if(type == "salt")
+    c = 3;
+  if(type == "milk")
+    c = 4;
+
+  std::stringstream stream;
+  stream << std::setw(6) << std::setfill('0') << std::hex << ((float)c/4.0f)*16777215;
+  std::string result(stream.str());
+
+  unsigned long r_value = std::strtoul(result.substr(0,2).c_str(), 0, 16);
+  unsigned long g_value = std::strtoul(result.substr(2,2).c_str(), 0, 16);
+  unsigned long b_value = std::strtoul(result.substr(4,2).c_str(), 0, 16);
+
+  cv::Vec3b color(r_value,g_value,b_value);
+  return color;
+
 }
 
 void ObjectDetector::computeLabelImage(){
   for(int i=0; i < _detections.size(); ++i){
     std::string type = _detections[i].type();
     std::string cropped_type = type.substr(0,type.find_first_of("_"));
+    cv::Vec3b color = type2color(cropped_type);
     for(int j=0; j < _detections[i]._pixels.size(); ++j){
       int r = _detections[i]._pixels[j].x();
       int c = _detections[i]._pixels[j].y();
 
-      _label_image.at<unsigned char>(c,r) = type2float(cropped_type)*255.0f;
+      _label_image.at<cv::Vec3b>(c,r) = color;
     }
   }
 }
