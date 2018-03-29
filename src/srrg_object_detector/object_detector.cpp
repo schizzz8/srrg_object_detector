@@ -127,6 +127,12 @@ void ObjectDetector::readData(char *filename){
   std::cerr << _logical_camera_transform.linear().matrix() << std::endl << std::endl;
 
   int num_models=_models.size();
+  _bounding_boxes.resize(num_models);
+  _detections.resize(num_models);
+  for(int i=0; i<num_models; ++i){
+    _detections[i] = DetectionPtr (new Detection);
+  }
+
   std::cerr << "Detected " << num_models << " models" << std::endl << std::endl;
   for(int i=0; i<num_models; ++i){
     const Model &model = _models[i];
@@ -145,11 +151,8 @@ void ObjectDetector::readData(char *filename){
 
 void ObjectDetector::computeWorldBoundingBoxes(){
   Eigen::Isometry3f transform = _rgbd_camera_transform.inverse()*_logical_camera_transform;
-  int num_models=_models.size();
-  _bounding_boxes.resize(num_models);
-  _detections.resize(num_models);
 
-  for(int i=0; i<num_models; ++i){
+  for(int i=0; i<_models.size(); ++i){
     const Model &model = _models[i];
     const Eigen::Isometry3f& model_pose=model._pose;
 
@@ -173,7 +176,7 @@ void ObjectDetector::computeWorldBoundingBoxes(){
         z_max = points[i].z();
     }
     _bounding_boxes[i] = std::make_pair(Eigen::Vector3f(x_min,y_min,z_min),Eigen::Vector3f(x_max,y_max,z_max));
-    _detections[i]._type = model._type;
+    _detections[i]->type() = model._type;
   }
 }
 
@@ -190,27 +193,28 @@ void ObjectDetector::computeImageBoundingBoxes(){
       const Eigen::Vector3f point(p[0],p[1],p[2]);
 
       for(int j=0; j < _bounding_boxes.size(); ++j){
-        int &r_min = _detections[j]._top_left.x();
-        int &c_min = _detections[j]._top_left.y();
-        int &r_max = _detections[j]._bottom_right.x();
-        int &c_max = _detections[j]._bottom_right.y();
 
         if(inRange(point,_bounding_boxes[j])){
-          if(r < r_min)
-            r_min = r;
-          if(r > r_max)
-            r_max = r;
+          if(r < _detections[j]->topLeft().x())
+            _detections[j]->topLeft().x() = r;
+          if(r > _detections[j]->bottomRight().x())
+            _detections[j]->bottomRight().x() = r;
 
-          if(c < c_min)
-            c_min = c;
-          if(c > c_max)
-            c_max = c;
+          if(c < _detections[j]->topLeft().y())
+            _detections[j]->topLeft().y() = c;
+          if(c > _detections[j]->bottomRight().y())
+            _detections[j]->bottomRight().y() = c;
 
-          _detections[j]._pixels.push_back(Eigen::Vector2i(c,r));
+          _detections[j]->pixels()[_detections[j]->size()] = Eigen::Vector2i(c,r);
+          ++(_detections[j]->size());
           break;
         }
       }
     }
+  }
+
+  for(size_t i=0; i < _detections.size(); ++i){
+    _detections[i]->pixels().resize(_detections[i]->size());
   }
 }
 
@@ -256,12 +260,12 @@ cv::Vec3b ObjectDetector::type2color(std::string type){
 
 void ObjectDetector::computeLabelImage(){
   for(int i=0; i < _detections.size(); ++i){
-    std::string type = _detections[i].type();
+    std::string type = _detections[i]->type();
     std::string cropped_type = type.substr(0,type.find_first_of("_"));
     cv::Vec3b color = type2color(cropped_type);
-    for(int j=0; j < _detections[i]._pixels.size(); ++j){
-      int r = _detections[i]._pixels[j].x();
-      int c = _detections[i]._pixels[j].y();
+    for(int j=0; j < _detections[i]->pixels().size(); ++j){
+      int r = _detections[i]->pixels()[j].x();
+      int c = _detections[i]->pixels()[j].y();
 
       _label_image.at<cv::Vec3b>(c,r) = color;
     }

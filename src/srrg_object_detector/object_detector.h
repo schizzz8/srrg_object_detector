@@ -12,30 +12,41 @@
 #include <srrg_image_utils/depth_utils.h>
 #include <srrg_image_utils/point_image_utils.h>
 
+class Detection;
 
+typedef std::shared_ptr<Detection> DetectionPtr;
+typedef std::vector<DetectionPtr> Detections;
 
 class Detection{
 public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   Detection(const std::string& type_="",
             const Eigen::Vector2i& top_left_ = Eigen::Vector2i(10000,10000),
             const Eigen::Vector2i& bottom_right_ = Eigen::Vector2i(-10000,-10000),
-            const std::vector<Eigen::Vector2i>& pixels_ = std::vector<Eigen::Vector2i>()):
+            const std::vector<Eigen::Vector2i>& pixels_ = std::vector<Eigen::Vector2i>(640*480)):
     _type(type_),
     _top_left(top_left_),
     _bottom_right(bottom_right_),
     _pixels(pixels_){}
 
-  inline const std::string& type() {return _type;}
-  inline const Eigen::Vector2i& topLeft() {return _top_left;}
-  inline const Eigen::Vector2i& bottomRight() {return _bottom_right;}
-  inline const std::vector<Eigen::Vector2i>& pixels() {return _pixels;}
+  inline const std::string& type() const {return _type;}
+  inline std::string& type() {return _type;}
+  inline const Eigen::Vector2i& topLeft() const {return _top_left;}
+  inline Eigen::Vector2i& topLeft() {return _top_left;}
+  inline const Eigen::Vector2i& bottomRight() const {return _bottom_right;}
+  inline Eigen::Vector2i& bottomRight() {return _bottom_right;}
+  inline const std::vector<Eigen::Vector2i>& pixels() const {return _pixels;}
+  inline std::vector<Eigen::Vector2i>& pixels() {return _pixels;}
+  inline const int size() const {return _size;}
+  inline int &size() {return _size;}
 
+private:
   std::string _type;
   Eigen::Vector2i _top_left;
   Eigen::Vector2i _bottom_right;
   std::vector<Eigen::Vector2i> _pixels;
+  int _size = 0;
 };
-typedef std::vector<Detection> Detections;
 
 class ObjectDetector{
 public:
